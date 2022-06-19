@@ -1,0 +1,9 @@
+redeem_scan_qr: 1
+discover_load_feed: 1
+discover_view_offer: 1.25
+discover_offer_impression: 2
+redeem_tap_redeem: 6
+redeem_tap_delivery: 6
+redeem_get_offer: 5
+discover_tap_favorite: 2
+review_complete_redemption: 8

@@ -1,0 +1,148 @@
+# Anchors
+
+_redshift_full: &redshift_full
+  type: carousel_ranking_v2.extras.RedshiftFullDataSet
+  host: lucky-bi-rs.cf0uhcd9n9dk.eu-west-2.redshift.amazonaws.com:5439/dwh
+  credentials: prod_redshift
+
+_redshift: &redshift
+  <<: *redshift_full
+  type: carousel_ranking_v2.extras.RedshiftDataSet
+
+# Configurations
+
+pulling_config:
+  type: kedro.extras.datasets.yaml.YAMLDataSet
+  filepath: conf/base/processing/pulling.yml
+
+segmentation_config:
+  type: kedro.extras.datasets.yaml.YAMLDataSet
+  filepath: conf/base/processing/segmentation.yml
+
+ranking_config:
+  type: kedro.extras.datasets.yaml.YAMLDataSet
+  filepath: conf/base/processing/ranking.yml
+
+event_weights:
+  type: kedro.extras.datasets.yaml.YAMLDataSet
+  filepath: conf/base/processing/event_weights.yml
+
+# Small data
+
+category_eg:
+  <<: *redshift_full
+  table: stg_lucky.category_eg
+
+merchant_eg:
+  <<: *redshift_full
+  table: stg_lucky.merchant_eg
+
+offerredemptionchannel_eg:
+  <<: *redshift_full
+  table: stg_lucky.offerredemptionchannel_eg
+
+offer_eg:
+  <<: *redshift_full
+  table: stg_lucky.offer_eg
+  columns:
+    - enddate
+    - offercappingtypeid
+    - offerid
+
+redemptionchannel_eg:
+  <<: *redshift_full
+  table: stg_lucky.redemptionchannel_eg
+
+# Heavy data
+
+# app_events_merged_s3:
+#   type: kedro.extras.datasets.pandas.ParquetDataSet
+#   filepath: s3://lucky-shamrock/data/app_events_merged.parquet
+#   credentials: s3_shamrock
+
+app_events:
+  <<: *redshift
+  table: stg_amplitude.app_events
+  columns:
+    event_timestamp: str
+    user_id: str
+    language: str
+    anonymous_user_id: str
+    event_id: str
+
+app_events_extended:
+  <<: *redshift
+  table: stg_amplitude.app_events_extended
+  columns:
+    event_id: null
+    event_type: null # null corresponds to no dtype change (forcing)
+    offer_id: null
+    merchant_id: null
+    category_id: null
+    channels: null
+    is_attribution_event: null
+
+transaction_eg:
+  <<: *redshift
+  table: stg_lucky.transaction_eg
+  columns:
+    offerid: int
+    transactionchannelid: null
+    transactionstatusid: null
+    customerplanid: null
+    createddatetime: str
+    burndatetime: str
+    branchid: null
+    expiredate: str
+    merchantid: null
+    luckyuserid: str
+    offerpaymentstatuslookupid: null
+    offerprice: float
+    commission: float
+    merchantcommission: float
+    value: float
+    clientrevenue: float
+    merchantcommissionfactor: float
+    originalprice: float
+    offerpercentage: float
+    simnumberid: null
+
+# Intermediate data
+
+app_events_merged:
+  type: carousel_ranking_v2.extras.VaexDataSet
+  filepath: data/02_intermediate/app_events.parquet
+
+transactions:
+  type: carousel_ranking_v2.extras.VaexDataSet
+  filepath: data/02_intermediate/transactions.parquet
+
+app_events_segmentation:
+  type: carousel_ranking_v2.extras.VaexDataSet
+  filepath: data/03_primary/app_events_segmentation.parquet
+
+uid_aid_mapping:
+  type: kedro.extras.datasets.pickle.PickleDataSet
+  filepath: data/03_primary/uid_aid_mapping.pkl
+
+aid_segm_mapping:
+  type: kedro.extras.datasets.pickle.PickleDataSet
+  filepath: data/07_model_output/aid_segm_mapping.pkl
+
+anon_ids_for_segmentation:
+  type: kedro.extras.datasets.pickle.PickleDataSet
+  filepath: data/03_primary/anon_ids_for_segmentation.pkl
+
+app_events_ranking:
+  type: PartitionedDataSet
+  dataset:
+    type: carousel_ranking_v2.extras.VaexDataSet
+  path: data/05_model_input/app_events_ranking
+  filename_suffix: .parquet
+
+event_based_ranks:
+  type: PartitionedDataSet
+  dataset:
+    type: kedro.extras.datasets.pickle.PickleDataSet
+  path: data/07_model_output/event_based_ranks
+  filename_suffix: .pkl

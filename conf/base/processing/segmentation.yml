@@ -1,0 +1,46 @@
+# ......................... #
+
+period: 35
+
+histograms:
+  - event_type == "discover_view_offer"
+
+onehotenc:
+  - language
+  - category_id
+#  - event_type
+
+#onehotenc:
+#  - merchant_id
+
+#drop_1:
+
+drop_2:
+  - device_manufacturer
+  - event_type
+  - user_id
+  - os_name
+  - offer_id
+  - category_id
+  - merchant_id
+  - merchant_id_-1.0
+  - category_id_-1.0
+  - category_id_-1
+  - is_attribution_event
+  - event_timestamp
+
+groupby:
+  - [ ~(event_type == "aab") & (event_timestamp < 31), event_type, total_activity, count ]
+  - [ ((event_type == "redeem_complete_redeem") | (event_type == "review_complete_redemption")) & (event_timestamp < 31), event_type, red_30d, count ]
+  - [ ((event_type == "redeem_complete_redeem") | (event_type == "review_complete_redemption")) & (event_timestamp < 15), event_type, red_14d, count ]
+  - [ (event_type == "discover_view_offer") & (event_timestamp < 4), event_type, views_3d, count ]
+  - [ (event_type == "discover_view_offer") & (event_timestamp < 8), event_type, views_7d, count ]
+  - [ (event_type == "redeem_get_offer") & (event_timestamp < 8), event_type, redeem_get_7d, count ]
+  - [ (event_type == "redeem_get_offer") & (event_timestamp < 15), event_type, redeem_get_14d, count ]
+  - [ (event_type == "redeem_get_offer") & (event_timestamp < 31), event_type, redeem_get_30d, count ]
+  - [ (event_type == "discover_tap_favorite") & (event_timestamp < 8), event_type, fav_7d, count ]
+  - [ (event_type == "discover_tap_favorite") & (event_timestamp < 15), event_type, fav_14d, count ]
+  - [ (event_type == "redeem_share_code") & (event_timestamp < 8), event_type, shr_7d, count ]
+  - [ (event_type == "redeem_share_code") & (event_timestamp < 15), event_type, shr_14d, count ]
+
+# ......................... #

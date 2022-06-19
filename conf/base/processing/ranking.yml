@@ -1,0 +1,33 @@
+# ......................... #
+
+events:
+
+  days_difference:
+    - event_timestamp
+
+  rescale:
+    impact: 0.1
+    shift: 0
+
+  leave_columns:
+    - anonymous_user_id
+    - event_type
+    - offer_id
+    - segment
+
+  onehotenc:
+    - offer_id
+
+  drop:
+    - event_type
+    - segment
+  
+# ......................... #
+
+transactions:
+
+  onehotenc:
+    - offer_id
+  
+  expressions:
+    - originalprice * offerpercentage / 100.0

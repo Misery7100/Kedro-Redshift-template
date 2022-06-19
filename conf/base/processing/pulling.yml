@@ -1,0 +1,62 @@
+# ......................... #
+
+events:
+
+  limit: 7000000
+  period: 35
+  chunksize: 400000
+
+transactions:
+
+  limit: 2000000
+  period: 35
+  chunksize: 300000
+
+# ......................... #
+
+events_preprocessing:
+
+  fillna:
+    "no": 
+      - channels
+      - anonymous_user_id
+
+    false:
+      - is_attribution_event
+    
+    "-1":
+      - merchant_id
+      - category_id
+
+  datetime:
+    - refresh_date
+    - event_timestamp
+  
+  days_difference:
+    - event_timestamp
+    
+  force_int:
+    - merchant_id
+    - category_id
+    - is_attribution_event
+
+# ......................... #
+
+transactions_preprocessing:
+
+  fillna:
+    -9999:
+      - simnumberid
+      - branchid
+      - merchantid
+  
+  datetime:
+    - refresh_date
+    - createddatetime
+    - expiredate
+  
+  days_difference:
+    - createddatetime
+    - expiredate
+
+# ......................... #

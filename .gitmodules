@@ -1,0 +1,3 @@
+[submodule "src/carousel_ranking_v2/extras"]
+	path = src/carousel_ranking_v2/extras
+	url = git@github.com:Lucky-ML/Kedro-Extras

@@ -1,0 +1,26 @@
+# ......................... #
+
+segmentation:
+
+  n_clusters: 30
+
+  optimizer:
+    learning_rate: 0.003
+    momentum : 0.9
+
+  fit:
+    epochs: 1000
+    batch_size: 32768
+    batch_size_fine: 1024
+
+# ......................... #
+
+ranking:
+
+  optimizer:
+    learning_rate: 0.0004
+
+  fit:
+      epochs: 300
+      batch_size: 32768
+# ......................... #

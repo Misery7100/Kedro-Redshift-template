@@ -1,1 +1,1 @@
-# Kedro-Redshift-template
+# Carousel-Ranking-V2
